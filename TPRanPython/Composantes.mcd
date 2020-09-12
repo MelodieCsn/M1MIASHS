@@ -1,0 +1,12 @@
+COMPOSANTE: idComposante, nomComposante, numero_telephone, mail
+GEREE, 0N COMPOSANTE, 1N SALLE
+SALLE: nom_salle, capacite, a_video
+
+:
+
+:
+
+APPARTIENT, 1N PERSONNE, 0N COMPOSANTE : date_appartenance
+PERSONNE: numP, nom, prenom, mail, telephone
+RESERVATION, 0N PERSONNE, 0N SALLE, 0N PERIODE, 0N COMPOSANTE
+PERIODE : heureDebut, _heureFin, _jour

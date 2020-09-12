@@ -1,0 +1,108 @@
+---
+title: "TPRMarkdown"
+author: "Mélodie"
+date: "01/09/2020"
+output: 
+  html_document:
+    theme: "cerulean"
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+CONTEXTE 
+ Voici quelques informaions sur l'univers Star Wars !
+ Les données viennent du site : https://swapi.dev/
+ 
+```{r inclusionDonnées, message=FALSE, warning=FALSE}
+library(dplyr)
+data(starwars)
+```
+
+Nous allons maintenant voir un dataframe : 
+```{r}
+head(starwars)
+```
+
+Nous allons voir ici un petit graphique : 
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+ggplot(starwars, aes(x = height, y = mass, label = name)) + 
+  geom_text(size = 3, alpha = 0.5)+ 
+  geom_point(size = 2, aes(color = name)) + theme(legend.position = "none") + 
+  ggtitle("Masse en fonction de la taille des personnages de Star Wars")
+```
+
+**Jabba**
+![](D:/M1MIASHS/maxresdefault.jpg)
+
+```{r message=FALSE, warning=FALSE}
+library(stringr)
+starwars_filtered <- starwars[!str_detect(starwars$name, "Jabba"),]
+
+ggplot(starwars_filtered, aes(x = height, y = mass, label = name)) + 
+  geom_text(size = 4, alpha = 0.5)+ 
+  geom_point(size = 3, aes(color = sex)) +
+  ggtitle("Masse en fonction du poids des personnages de Star Wars") + 
+  geom_smooth() + scale_color_brewer(palette = "Set2") 
+```
+
+Maintenant, des graphiques un peu plus badass
+
+```{r}
+# creation des paires de personnages
+pairs <- data.frame(t(combn(starwars$name, m = 2)))
+
+# fonction qui donne le nombre de films en commun pour deux personnages
+get_common <- function(pair){
+  c1 <- strsplit(pair,'+', fixed = T)[[1]][1]
+  c2 <- strsplit(pair,'+', fixed = T)[[1]][2]
+  return(length(intersect(starwars[starwars$name == c1,]$films[[1]],
+                          starwars[starwars$name == c2,]$films[[1]])))
+}
+
+pairs[, "co_oc"] <- sapply(paste0(pairs[,1], '+',  pairs[,2]),  
+                           FUN = get_common)
+# La distribution des nombres de films en commun pour toutes les paires de personnages :
+table(pairs$co_oc)
+
+library(visNetwork)
+
+MIN_SHARED_FILMS <- 4
+
+# construction du dataframe des aretes du reseau
+edges <- pairs[pairs$co_oc >= MIN_SHARED_FILMS, ]
+net <- igraph::graph_from_data_frame(na.omit(edges), vertices = starwars, directed = FALSE)
+data <- toVisNetworkData(net)
+data$edges$value <- data$edges$co_oc
+data$edges$label <- data$edges$co_oc
+
+# visualisation
+visNetwork(data$nodes, data$edges) %>%
+  visEdges(smooth = FALSE, color = "grey", 
+           scaling = list(min = 10, max = 100)) %>%
+    visPhysics(
+      solver = "forceAtlas2Based",
+      timestep = 1,
+      minVelocity = 12,
+      maxVelocity = 9
+    ) %>%
+  visNodes(borderWidth = 1.5, size = 100, font = list("size" = 200, background = "white"), 
+           color = list("background" = "black", "border" = "orange"))
+
+# Affichage des personnages les plus connectés
+data$nodes$degree <- igraph::degree(net)
+plotly::ggplotly(ggplot(data$nodes, aes(x = degree, y = id)) + 
+                   geom_point(aes(color = degree, size = degree)) +
+                   ggtitle(paste("Nombre de personnages qui partagent au moins ",MIN_SHARED_FILMS," films"))+ 
+                   scale_color_gradient(high = "orange", low = "black")) 
+```
+
+$N = R^*.f_{p}.n_{e}.f_{l}.f_{i}.f_{c}.L$
+

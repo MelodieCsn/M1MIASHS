@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+  #mld .relation { font-variant: small-caps; font-weight: bold }
+  #mld .primary { text-decoration: underline }
+  #mld .foreign { font-style: oblique }
+  #mld .normal { }
+</style>
+</head>
+<body>
+<div id='mld'>
+<div>
+  <span class='relation'>COMPOSANTE</span> (
+    <span class='primary'>idComposante</span>,
+    <span class='normal'>nomComposante</span>,
+    <span class='normal'>numero_telephone</span>,
+    <span class='normal'>mail</span>
+  )
+</div>
+<div>
+  <span class='relation'>GEREE</span> (
+    <span class='foreign primary'>idComposante</span>,
+    <span class='foreign primary'>nom_salle</span>
+  )
+</div>
+<div>
+  <span class='relation'>SALLE</span> (
+    <span class='primary'>nom_salle</span>,
+    <span class='normal'>capacite</span>,
+    <span class='normal'>a_video</span>
+  )
+</div>
+<div>
+  <span class='relation'>APPARTIENT</span> (
+    <span class='foreign primary'>numP</span>,
+    <span class='foreign primary'>idComposante</span>,
+    <span class='normal'>date_appartenance</span>
+  )
+</div>
+<div>
+  <span class='relation'>PERSONNE</span> (
+    <span class='primary'>numP</span>,
+    <span class='normal'>nom</span>,
+    <span class='normal'>prenom</span>,
+    <span class='normal'>mail</span>,
+    <span class='normal'>telephone</span>
+  )
+</div>
+<div>
+  <span class='relation'>RESERVATION</span> (
+    <span class='foreign primary'>numP</span>,
+    <span class='foreign primary'>nom_salle</span>,
+    <span class='foreign primary'>heureDebut</span>,
+    <span class='foreign primary'>heureFin</span>,
+    <span class='foreign primary'>jour</span>,
+    <span class='foreign primary'>idComposante</span>
+  )
+</div>
+<div>
+  <span class='relation'>PERIODE</span> (
+    <span class='primary'>heureDebut</span>,
+    <span class='primary'>heureFin</span>,
+    <span class='primary'>jour</span>
+  )
+</div>
+</div>
+</body>
+</html>
