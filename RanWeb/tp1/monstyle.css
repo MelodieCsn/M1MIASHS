@@ -1,0 +1,27 @@
+*{
+	font-family: "Arial";
+}
+
+body{
+	border-style: solid;
+	border-width: 2px;
+	border-color: rgb(200, 200, 200);
+}
+
+img{
+	width: 140px;
+}
+
+h2 {
+	color: rgb(200, 200, 200);
+	padding-left: 50px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	background-color: rgb(0,0,0);
+}
+
+p {
+	width: 500px;
+}
