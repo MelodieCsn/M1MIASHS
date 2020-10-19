@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="UTF-8">
+		<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+		<title>COVID D3</title>
+		<script>
+
+		function maxDataCases(d){
+			var m=0;
+			for (var key in d){
+				if(d[key].total_cases > m){
+					m = d[key].total_cases
+				}
+			}
+			return m;
+		}
+		function maxDataDeaths(d){
+			var m=0;
+			for (var key in d){
+				if(d[key].total_deaths > m){
+					m = d[key].total_deaths
+				}
+			}
+			return m;
+		}
+
+		function tabOfKeys(d){
+			var t = [];var i = 0;
+			for (var key in d){
+				t[i] = key;i++;
+			}
+			return t;
+		}
+
+			d3.json("exo1covid.json").then(function(data) {
+				console.log(data);
+				console.log(data[0].total_cases);
+
+
+				//création de l'échelle des axes Y et X
+				var scaleY = d3.scaleLinear();
+				scaleY.domain([0,maxDataDeaths(data)]);
+				scaleY.range([450,0]);
+
+				var scaleX= d3.scaleLinear();
+				scaleY.domain([0,maxDataCases(data)]);
+				scaleX.range([0,450]);
+
+				// création des axes X et Y
+				var xAxis = d3.axisBottom(scaleX);
+				var yAxis = d3.axisLeft(scaleY);
+
+				var svg = d3.select("#vis");
+				var gGlobal = svg.append("g");
+				var gxAxis = gGlobal.append("g");
+				gxAxis.call(xAxis);
+				gxAxis.attr("transform","translate(30,460)");
+				var gyAxis = gGlobal.append("g");
+				gyAxis.call(yAxis);
+				gyAxis.attr("transform","translate(30,10)");
+
+				var gBarres = gGlobal.append("g");
+				gBarres.attr("transform","translate(30,10)");
+
+				// var barre = gBarres.append("rect"); //Ajout d’un objetSVGrectà gBarres
+				// barre.attr("width", 50); //Largeur de l’objet
+				// barre.attr("height", 50); //Hauteur de l’objet
+				// barre.attr("x", 70); //Position x de l’objet
+				// barre.attr("y", 90); //Position y de l’objet
+				// barre.attr("fill", "orange"); //Couleur de l’objet
+
+				var z = d3.zoom();
+				z.on("zoom", function({transform}){
+					gGlobal.attr("transform", transform);});
+					svg.call(z);
+
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<svg id="vis" width="500" height="500"></svg>
+
+
+</body></html>

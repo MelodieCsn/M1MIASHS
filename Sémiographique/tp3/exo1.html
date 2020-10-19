@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!-- saved from url=(0084)https://moodle.univ-montp3.fr/pluginfile.php/129368/mod_resource/content/1/exo1.html -->
+<html lang="fr">
+	<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+		<title>Diagramme en barres D3</title>
+		<script>
+		function maxData(d){
+			var m=0;
+			for (var key in d){
+				if(d[key] > m){
+					m = d[key]
+				}
+			}
+			return m;
+		}
+
+		function tabOfKeys(d){
+			var t = [];var i = 0;
+			for (var key in d){
+				t[i] = key;i++;
+			}
+			return t;
+		}
+
+			d3.json("exo1.json").then(function(data) {
+				console.log(data);
+				var barLengths = {};
+				for(i=0;i<data.length;i++){
+					if(barLengths[data[i]] == undefined){
+						barLengths[data[i]] = 1;
+					}
+					else{
+						barLengths[data[i]] = barLengths[data[i]]+1;
+					}
+				}
+				console.log(barLengths);
+
+				// création de l'échelle des axes Y et X
+				var scaleY = d3.scaleLinear();
+				scaleY.domain([0,maxData(barLengths)]);
+				scaleY.range([450,0]);
+
+				var scaleX= d3.scaleBand();
+				scaleX.domain(tabOfKeys(barLengths));
+				scaleX.range([0,450]);
+
+				// création des axes X et Y
+				var xAxis = d3.axisBottom(scaleX);
+				var yAxis = d3.axisLeft(scaleY);
+
+				var svg = d3.select("#vis");
+				var gGlobal = svg.append("g");
+				var gxAxis = gGlobal.append("g");
+				gxAxis.call(xAxis);
+				gxAxis.attr("transform","translate(30,460)");
+				var gyAxis = gGlobal.append("g");
+				gyAxis.call(yAxis);
+				gyAxis.attr("transform","translate(30,10)");
+
+				var gBarres = gGlobal.append("g");
+				gBarres.attr("transform","translate(30,10)");
+
+				// var barre = gBarres.append("rect"); //Ajout d’un objetSVGrectà gBarres
+				// barre.attr("width", 50); //Largeur de l’objet
+				// barre.attr("height", 50); //Hauteur de l’objet
+				// barre.attr("x", 70); //Position x de l’objet
+				// barre.attr("y", 90); //Position y de l’objet
+				// barre.attr("fill", "orange"); //Couleur de l’objet
+
+				for (var key in barLengths) {
+					console.log(scaleX(key));
+					var barre = gBarres.append("rect");
+					barre.attr("width", scaleX.bandwidth()-2);
+					barre.attr("height", 450-scaleY(barLengths[key]));
+					barre.attr("x", 1+scaleX(key));
+					barre.attr("y", scaleY(barLengths[key]));
+					barre.attr("fill", "teal");
+				}
+				var z = d3.zoom();
+				z.on("zoom", function({transform}){
+					gGlobal.attr("transform", transform);});
+					svg.call(z);
+
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<svg id="vis" width="500" height="500" style="border: 1px solid gray"></svg>
+
+
+</body></html>
