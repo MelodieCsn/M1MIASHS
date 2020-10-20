@@ -112,7 +112,9 @@ reg_for
 #1
 install.packages("leaps")
 library(leaps)
+exemple= regsubsets(maxO3~maxO3v+T9+Vx12+T12+Ne12+Vx15+Ne15, data=ozone)
 
+plot(exemple, scale="bic")
 
 
 

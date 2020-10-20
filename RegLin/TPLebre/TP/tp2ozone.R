@@ -28,3 +28,10 @@ exemple= regsubsets(maxO3~maxO3v+T12+Ne12+Vx15, data=ozone)
 plot(exemple, scale="bic")
 
 plot(exemple,scale="Cp")
+
+plot(exemple,scale="r2")
+
+plot(exemple,scale="adjr2")
+
+reg_for=step(exemple, direction = "forward")
+reg_for
