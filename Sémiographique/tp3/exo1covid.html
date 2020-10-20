@@ -9,7 +9,7 @@
 		function maxDataCases(d){
 			var m=0;
 			for (var key in d){
-				if(d[key].total_cases > m){
+				if(d[key].total_cases > m && d[key].total_cases > 0){
 					m = d[key].total_cases
 				}
 			}
@@ -18,7 +18,7 @@
 		function maxDataDeaths(d){
 			var m=0;
 			for (var key in d){
-				if(d[key].total_deaths > m){
+				if(d[key].total_deaths > m && d[key].total_deaths > 0){
 					m = d[key].total_deaths
 				}
 			}
@@ -39,12 +39,12 @@
 
 
 				//création de l'échelle des axes Y et X
-				var scaleY = d3.scaleLinear();
-				scaleY.domain([0,maxDataDeaths(data)]);
+				var scaleY = d3.scaleLog();
+				scaleY.domain([1,maxDataDeaths(data)]);
 				scaleY.range([450,0]);
 
-				var scaleX= d3.scaleLinear();
-				scaleY.domain([0,maxDataCases(data)]);
+				var scaleX= d3.scaleLog();
+				scaleX.domain([1,maxDataCases(data)]);
 				scaleX.range([0,450]);
 
 				// création des axes X et Y
@@ -60,8 +60,6 @@
 				gyAxis.call(yAxis);
 				gyAxis.attr("transform","translate(30,10)");
 
-				var gBarres = gGlobal.append("g");
-				gBarres.attr("transform","translate(30,10)");
 
 				// var barre = gBarres.append("rect"); //Ajout d’un objetSVGrectà gBarres
 				// barre.attr("width", 50); //Largeur de l’objet
@@ -75,6 +73,29 @@
 					gGlobal.attr("transform", transform);});
 					svg.call(z);
 
+					var triangleUp = d3.line()([[0, 0], [3, -6], [6, 0]]);
+					var triangleDown = d3.line()([[0, -6], [3, 0], [6, -6]]);
+					var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+					var gTriangles = gGlobal.append("g");
+					gTriangles.attr("transform","translate(40,10)");
+					for (var i=0; i<data.length; i++){
+						var tr = gTriangles.append("path");
+						if(data[i]["new_cases"]==0){
+							tr.attr("d", triangleDown);
+						}
+						else {
+							tr.attr("d", triangleUp);
+						}
+						tr.attr("fill", colorScale(data[i]["continent"]));
+						tr.attr("fill-opacity", 0.65);
+						tr.attr("transform",
+										"translate(" + scaleX(data[i]["total_cases"])+","
+																+ scaleY(data[i]["total_deaths"])
+																+ ")"
+										);
+						tr.append("title").text(data[i]["location"]);
+
+					}
 
 			});
 
