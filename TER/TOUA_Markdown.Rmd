@@ -23,21 +23,19 @@ head(toua)
 
 ```{r}
 toua$C_change <- round(((toua$C_eCo2-toua$C_aCo2)/toua$C_aCo2)*100, digits = 2)
-toua$Cu_change <- round(((toua$Cu_eCo2-toua$Cu_aCo2)/toua$Cu_aCo2)*100, digits = 2)
 toua_ch <- select(toua,"genotype"|contains("change"))
 
 # Passer en format long avec gather
 
-toua_chl <- gather(data = toua_ch, key = "element", value = "valeur", 2:9)
+toua_chl <- gather(data = toua_ch, key = "element", value = "valeur", 2:8)
 head(toua_chl)
-unique(toua_chl$element)
 ```
 
 ## Premieres Visus
 Objectif = Visualiser la variation moyennes des mesures pour chaque element en eCO2 par rapport au a CO2
 En primer representation des moyennes et ecart type de ces variations (pour "reproduire" ce qui a été observé chez le riz)
 
-```{r message=FALSE, warning=FALSE}
+```{r}
 library(ggplot2)
 library(hrbrthemes)
 library(viridis)
@@ -102,132 +100,3 @@ ggplot(toua_FC, aes(x = element, y=valeur, fill = element)) +
 ```
 
 C'est pas mieux.Mias au moins on n a pas coupé le graph. Est ce vraiment une echelle log ? 
-
-```{r}
-toua$aNC_ratio <- toua$N_aCo2/toua$C_aCo2
-toua$eNC_ratio <- toua$N_eCo2/toua$C_eCo2
-```
-
-```{r}
-library(ggplot2)
-ggplot(data= toua, aes(x =aCN_ratio, y = eCN_ratio))+
-  geom_point()+
-  geom_abline(a=0, b=1)
-  
-
-```
-```{r}
-library(ggplot2)
-ggplot(data= toua, aes(x =aNC_ratio, y = eNC_ratio))+
-  geom_point()+
-  geom_abline(a=0, b=1)
-```
-
-```{r}
-library(ggplot2)
-ggplot(data= toua, aes(x = Zn_aCo2, y = Zn_eCo2))+
-  geom_point()+
-  ylim(0,300) +
-  xlim(0,300)
-```
-### Nouveaux Scatter Plot
-
-```{r}
-attach(toua)
-plot(C_aCo2, C_eCo2, main="Scatterplot Carbonne",
-     xlab="C_aCo2", ylab="C_eCo2") 
-abline(lm(C_eCo2~C_aCo2), col="red") # regression line (y~x)
-abline(0,1, col = "blue")
-
-```
-
-```{r}
-attach(toua)
-plot(Zn_aCo2, Zn_eCo2, main="Scatterplot Zinc",
-     xlab="Zn_aCo2", ylab="Zn_eCo2") 
-abline(lm(Zn_eCo2~Zn_aCo2), col="red") # regression line (y~x)
-abline(0,1, col = "blue")
-```
-
-```{r}
-
-plot(toua$Na_aCo2, toua$Na_eCo2, main="Scatterplot Na",
-     xlab="Na_aCo2", ylab="Na_eCo2")
-abline(a =0, b=1, col = "blue")
-abline(lm(Na_eCo2~Na_aCo2), col="red") # regression line (y~x)
-```
-
-```{r}
-attach(toua)
-plot(N_aCo2, N_eCo2, main="Scatterplot N",
-     xlab="N_aCo2", ylab="N_eCo2")
-abline(0,1, col = "blue")
-abline(lm(N_eCo2~N_aCo2), col="red") # regression line (y~x)
-```
-
-```{r}
-attach(toua)
-plot(Cu_aCo2, Cu_eCo2, main="Scatterplot Cu",
-     xlab="Cu_aCo2", ylab="Cu_eCo2", pch=19)
-abline(0,1, col = "blue")
-abline(lm(Cu_eCo2~Cu_aCo2), col="red") # regression line (y~x)
-```
-
-```{r}
-attach(toua)
-plot(Fe_aCo2, Fe_eCo2, main="Scatterplot Fe",
-     xlab="Fe_aCo2", ylab="Fe_eCo2", pch=19)
-abline(0,1, col = "blue")
-abline(lm(Fe_eCo2~Fe_aCo2), col="red") # regression line (y~x)
-```
-
-```{r}
-attach(toua)
-plot(Mg_aCo2, Mg_eCo2, main="Scatterplot Mg",
-     xlab="Mg_aCo2", ylab="Mg_eCo2", pch=19)
-abline(0,1, col = "blue")
-abline(lm(Mg_eCo2~Mg_aCo2), col="red") # regression line (y~x)
-```
-
-```{r}
-attach(toua)
-plot(Mn_aCo2, Mn_eCo2, main="Scatterplot Mn",
-     xlab="Mn_aCo2", ylab="Mn_eCo2", pch=19)
-abline(0,1, col = "blue")
-abline(lm(Mn_eCo2~Mn_aCo2), col="red") # regression line (y~x)
-```
-
-```{r}
-attach(toua)
-plot(Cu_aCo2, Cu_eCo2, main="Scatterplot Cu",
-     xlab="Cu_aCo2", ylab="Cu_eCo2", pch=19)
-abline(0,1, col = "blue")
-abline(lm(Cu_eCo2~Cu_aCo2), col="red") # regression line (y~x)
-```
-
-
-
-### Verification normalité des données
-
-```{r, message=FALSE, warning=FALSE}
-attach(toua)
-hist(toua$Cu_eCo2)
-```
-```{r}
-shapiro.test(toua$Cu_eCo2)
-```
-```{r}
-hist(toua$Cu_aCo2)
-```
-```{r}
-shapiro.test(toua$Cu_aCo2)
-```
-```{r}
-hist(toua$C_aCo2)
-```
-
-```{r}
-shapiro.test(toua$C_aCo2)
-```
-
-
