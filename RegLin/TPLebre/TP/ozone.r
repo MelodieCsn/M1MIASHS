@@ -93,3 +93,28 @@ echgauss = rnorm(n=1000,mean=0,sd=1)
 
 qqplot(rstand,echgauss)
 abline(a=0,b=1, col=2)
+
+# ________________________TP2__________________________
+
+reg6v = lm(maxO3~maxO3v+T9+Vx12+T12+Ne12+Vx15+Ne15, data=ozone)
+
+reg_back=step(reg6v, direction = "backward")
+reg_back
+
+reg_both=step(reg6v, direction = "both")
+reg_both
+
+reg_1v = lm()
+
+reg_for=step(reg6v, direction = "forward")
+reg_for
+
+#1
+install.packages("leaps")
+library(leaps)
+exemple= regsubsets(maxO3~maxO3v+T9+Vx12+T12+Ne12+Vx15+Ne15, data=ozone)
+
+plot(exemple, scale="bic")
+
+
+
